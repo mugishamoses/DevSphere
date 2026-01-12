@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSphere - MoMo Analytics Dashboard</title>
+    <link rel="stylesheet" href="web/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1> DevSphere</h1>
+                <p class="subtitle">MoMo Transaction Analytics Dashboard</p>
+            </div>
+            <div class="header-actions">
+                <button id="refreshBtn" class="btn btn-primary"> Refresh Data</button>
+                <span id="lastUpdated" class="last-updated">Last updated: Loading...</span>
+            </div>
+        </header>
+
+        <!-- Statistics Cards -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"></div>
+                <div class="stat-content">
+                    <h3>Total Amount</h3>
+                    <p id="totalAmount" class="stat-value">Loading...</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon"></div>
+                <div class="stat-content">
+                    <h3>Total Transactions</h3>
+                    <p id="totalTransactions" class="stat-value">Loading...</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon"></div>
+                <div class="stat-content">
+                    <h3>Money Sent</h3>
+                    <p id="moneySent" class="stat-value">Loading...</p>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon"></div>
+                <div class="stat-content">
+                    <h3>Money Received</h3>
+                    <p id="moneyReceived" class="stat-value">Loading...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+            <div class="chart-container">
+                <h2>Transaction Types Distribution</h2>
+                <canvas id="transactionTypeChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h2>Monthly Transaction Trends</h2>
+                <canvas id="monthlyTrendChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Transaction Table -->
+        <section class="table-section">
+            <div class="section-header">
+                <h2>Recent Transactions</h2>
+                <div class="table-controls">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search transactions...">
+                    <select id="typeFilter" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="DEPOSIT">Deposits</option>
+                        <option value="WITHDRAWAL">Withdrawals</option>
+                        <option value="TRANSFER_SENT">Sent</option>
+                        <option value="TRANSFER_RECEIVED">Received</option>
+                        <option value="AIRTIME">Airtime</option>
+                        <option value="BILL_PAYMENT">Bills</option>
+                        <option value="MERCHANT_PAYMENT">Merchants</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table id="transactionsTable" class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Transaction ID</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Counterparty</th>
+                            <th>Balance</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <tr>
+                            <td colspan="7" class="loading">Loading transactions...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination">
+                <button id="prevBtn" class="btn btn-secondary" disabled>← Previous</button>
+                <span id="pageInfo" class="page-info">Page 1</span>
+                <button id="nextBtn" class="btn btn-secondary">Next →</button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2026 DevSphere Team | African Leadership University</p>
+            <p>Enterprise MoMo SMS Data Processing System</p>
+        </footer>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Load JavaScript -->
+    <script src="web/chart_handler.js"></script>
+</body>
+</html>
