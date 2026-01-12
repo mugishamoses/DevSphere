@@ -5,8 +5,8 @@
 
 **Team Members:**
 - [Member 1 Name] - [GitHub Username] - Mugisha Moses
-- [Member 2 Name] - [GitHub Username] - Lisa Ineza
-- [Member 3 Name] - [GitHub Username] - Nkingi Chris
+- [Member 2 Name] - [lisaineza] - Lisa Ineza
+- [Member 3 Name] - [Gakindi1] - Nkingi Chris
 
 
 ## Project Description
