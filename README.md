@@ -4,7 +4,7 @@
 **Team Name:** DevSphere
 
 **Team Members:**
-- [Member 1 Name] - [GitHub Username] - Mugisha Moses
+- [Member 1 Name] - [mugishamoses] - Mugisha Moses
 - [Member 2 Name] - [lisaineza] - Lisa Ineza
 - [Member 3 Name] - [Gakindi1] - Nkingi Chris
 
