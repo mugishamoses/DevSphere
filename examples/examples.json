@@ -1,10 +1,10 @@
 {
   "title": "MoMo SMS System - JSON Data Schemas",
-  "version": "1.0",
-  "description": "JSON serialization examples for DevSphere database entities",
+  "version": "2.0",
+  "description": "JSON serialization examples for DevSphere MoMo SMS database entities",
   "schemas": {
     "User": {
-      "description": "User/Customer entity serialization",
+      "description": "Individual user/customer profile",
       "example": {
         "user_id": 1,
         "phone_number": "250788123456",
@@ -18,7 +18,7 @@
       }
     },
     "TransactionCategory": {
-      "description": "Transaction category master data",
+      "description": "Transaction category definitions",
       "example": {
         "category_id": 1,
         "category_name": "Money Transfer",
@@ -29,8 +29,8 @@
         "updated_at": "2026-01-10T10:00:00Z"
       }
     },
-    "Transaction": {
-      "description": "Basic transaction record",
+    "BasicTransaction": {
+      "description": "Transaction record",
       "example": {
         "transaction_id": 1,
         "sender_id": 1,
@@ -58,7 +58,7 @@
       }
     },
     "UserCategoryPreference": {
-      "description": "User preference for transaction categories (M:N junction)",
+      "description": "User preference for transaction categories",
       "example": {
         "preference_id": 1,
         "user_id": 1,
@@ -71,29 +71,30 @@
       }
     },
     "CompleteTransactionDetails": {
-      "description": "Complex nested JSON representing complete transaction with all related data (API Response)",
+      "description": "Complete transaction with related data",
       "example": {
         "transaction_id": 1,
         "reference_number": "TXN20260125001",
-        "transaction_type": "Money Transfer",
-        "amount": 10000.00,
         "status": "completed",
+        "amount": 10000.00,
         "transaction_date": "2026-01-25T10:30:00Z",
         "sender": {
           "user_id": 1,
           "full_name": "Jean Claude Mugabo",
           "phone_number": "250788123456",
           "email": "jc.mugabo@email.com",
-          "current_balance_before": 50000.00,
-          "current_balance_after": 39850.00
+          "account_status": "active",
+          "balance_before_transaction": 50000.00,
+          "balance_after_transaction": 39850.00
         },
         "receiver": {
           "user_id": 2,
           "full_name": "Marie Grace Uwera",
           "phone_number": "250788234567",
           "email": "mg.uwera@email.com",
-          "current_balance_before": 125000.00,
-          "current_balance_after": 135000.00
+          "account_status": "active",
+          "balance_before_transaction": 125000.00,
+          "balance_after_transaction": 135000.00
         },
         "category": {
           "category_id": 1,
@@ -101,29 +102,448 @@
           "description": "Person-to-person money transfer for personal payments",
           "fee_percentage": 1.50
         },
-        "fee": {
+        "financial_details": {
+          "amount_transferred": 10000.00,
           "fee_amount": 150.00,
           "fee_calculation": "10000 * (1.50 / 100)",
-          "fee_recipient": "MoMo System"
+          "total_deducted_from_sender": 10150.00,
+          "total_received_by_receiver": 10000.00,
+          "currency": "RWF"
         },
-        "notes": "Payment for services",
+        "transaction_notes": "Payment for services",
+        "audit_trail": [
+          {
+            "log_id": 1,
+            "log_type": "TRANSACTION_INIT",
+            "log_message": "Transaction initiated by user 1",
+            "severity": "info",
+            "timestamp": "2026-01-25T10:30:00Z"
+          },
+          {
+            "log_id": 2,
+            "log_type": "TRANSACTION_COMPLETE",
+            "log_message": "Transaction completed successfully",
+            "severity": "info",
+            "timestamp": "2026-01-25T10:31:00Z"
+          }
+        ],
         "metadata": {
           "created_at": "2026-01-25T10:30:00Z",
           "updated_at": "2026-01-25T10:31:00Z",
           "processing_time_ms": 1250,
           "ip_address": "192.168.1.100",
-          "device_type": "SMS"
+          "device_type": "SMS",
+          "region": "Rwanda"
         }
       }
     },
-    "UserTransactionSummary": {
-      "description": "Aggregated transaction summary per user (for reporting)",
+    "UserWithPreferences": {
+      "description": "User with category preferences",
       "example": {
         "user_id": 1,
         "full_name": "Jean Claude Mugabo",
-        "total_transactions": 25,
-        "total_amount_sent": 250000.00,
-        "total_amount_received": 150000.00,
-        "average_transaction_value": 10000.00,
-        "last_transaction_date": "2026-01-25T10:30:00Z"
-      } 
+        "phone_number": "250788123456",
+        "email": "jc.mugabo@email.com",
+        "account_balance": 50000.00,
+        "status": "active",
+        "registration_date": "2026-01-15T08:30:00Z",
+        "category_preferences": [
+          {
+            "preference_id": 1,
+            "category": {
+              "category_id": 1,
+              "category_name": "Money Transfer",
+              "fee_percentage": 1.50
+            },
+            "preference_level": 1,
+            "usage_count": 5,
+            "last_used_date": "2026-01-25T10:30:00Z"
+          },
+          {
+            "preference_id": 2,
+            "category": {
+              "category_id": 3,
+              "category_name": "Airtime Purchase",
+              "fee_percentage": 0.00
+            },
+            "preference_level": 2,
+            "usage_count": 3,
+            "last_used_date": "2026-01-25T09:15:00Z"
+          }
+        ]
+      }
+    },
+    "UserTransactionSummary": {
+      "description": "User transaction summary",
+      "example": {
+        "user_id": 1,
+        "full_name": "Jean Claude Mugabo",
+        "phone_number": "250788123456",
+        "total_transactions_sent": 8,
+        "total_transactions_received": 5,
+        "total_amount_sent": 125000.00,
+        "total_amount_received": 75000.00,
+        "total_fees_paid": 1875.00,
+        "average_transaction_value_sent": 15625.00,
+        "average_transaction_value_received": 15000.00,
+        "current_balance": 50000.00,
+        "account_status": "active",
+        "last_transaction_date": "2026-01-25T10:30:00Z",
+        "member_since": "2026-01-15T08:30:00Z"
+      }
+    },
+    "TransactionDetailsList": {
+      "description": "Paginated list of transactions",
+      "example": {
+        "pagination": {
+          "current_page": 1,
+          "page_size": 10,
+          "total_records": 7,
+          "total_pages": 1
+        },
+        "transactions": [
+          {
+            "transaction_id": 1,
+            "reference_number": "TXN20260125001",
+            "sender": {
+              "user_id": 1,
+              "full_name": "Jean Claude Mugabo",
+              "phone_number": "250788123456"
+            },
+            "receiver": {
+              "user_id": 2,
+              "full_name": "Marie Grace Uwera",
+              "phone_number": "250788234567"
+            },
+            "category": {
+              "category_id": 1,
+              "category_name": "Money Transfer"
+            },
+            "amount": 10000.00,
+            "fee_amount": 150.00,
+            "total_deducted": 10150.00,
+            "status": "completed",
+            "transaction_date": "2026-01-25T10:30:00Z",
+            "notes": "Payment for services"
+          }
+        ]
+      }
+    },
+    "ComplexMultiUserTransaction": {
+      "description": "Business transaction with complete context",
+      "example": {
+        "transaction": {
+          "transaction_id": 3,
+          "reference_number": "TXN20260125003",
+          "status": "completed",
+          "type": "business_payment",
+          "transaction_date": "2026-01-25T14:20:00Z"
+        },
+        "sender": {
+          "user_id": 3,
+          "full_name": "Eric Nsabimana",
+          "phone_number": "250788345678",
+          "email": "e.nsabimana@email.com",
+          "status": "active",
+          "account_status_before": {
+            "balance": 75000.00,
+            "last_transaction": "2026-01-25T13:45:00Z"
+          },
+          "account_status_after": {
+            "balance": 24500.00,
+            "last_transaction": "2026-01-25T14:20:00Z"
+          },
+          "preferences": {
+            "preferred_categories": [
+              {
+                "category_id": 4,
+                "category_name": "Merchant Payment",
+                "preference_level": 1,
+                "usage_count": 6
+              },
+              {
+                "category_id": 1,
+                "category_name": "Money Transfer",
+                "preference_level": 2,
+                "usage_count": 2
+              }
+            ]
+          }
+        },
+        "receiver": {
+          "user_id": 4,
+          "full_name": "Diane Mutoni",
+          "phone_number": "250788456789",
+          "email": "d.mutoni@email.com",
+          "status": "active",
+          "merchant_info": {
+            "business_name": "Mutoni's Hardware Store",
+            "category": "Retail",
+            "verification_status": "verified"
+          },
+          "account_status_before": {
+            "balance": 200000.00,
+            "last_transaction": "2026-01-25T13:00:00Z"
+          },
+          "account_status_after": {
+            "balance": 250000.00,
+            "last_transaction": "2026-01-25T14:20:00Z"
+          }
+        },
+        "transaction_details": {
+          "category": {
+            "category_id": 4,
+            "category_name": "Merchant Payment",
+            "description": "Payment to registered merchants and businesses",
+            "fee_percentage": 1.00,
+            "is_active": true
+          },
+          "financial": {
+            "amount": 50000.00,
+            "currency": "RWF",
+            "fee_percentage": 1.00,
+            "fee_amount": 500.00,
+            "breakdown": {
+              "amount_transferred": 50000.00,
+              "fee_charged": 500.00,
+              "total_deducted_from_sender": 50500.00,
+              "total_credited_to_receiver": 50000.00,
+              "fee_retained_by_system": 500.00
+            }
+          },
+          "description": "Hardware store inventory payment",
+          "invoice_reference": "INV-2026-001234"
+        },
+        "system_records": {
+          "audit_logs": [
+            {
+              "log_id": 15,
+              "log_type": "TRANSACTION_INIT",
+              "log_message": "Transaction initiated by user 3",
+              "severity": "info",
+              "created_at": "2026-01-25T14:20:00Z"
+            },
+            {
+              "log_id": 16,
+              "log_type": "BALANCE_CHECK",
+              "log_message": "Sender balance verified: sufficient funds available",
+              "severity": "info",
+              "created_at": "2026-01-25T14:20:01Z"
+            },
+            {
+              "log_id": 17,
+              "log_type": "BALANCE_UPDATE",
+              "log_message": "Balances updated - Sender: -50500, Receiver: +50000 for TXN: TXN20260125003",
+              "severity": "info",
+              "created_at": "2026-01-25T14:20:02Z"
+            },
+            {
+              "log_id": 18,
+              "log_type": "TRANSACTION_COMPLETE",
+              "log_message": "Transaction completed successfully",
+              "severity": "info",
+              "created_at": "2026-01-25T14:20:03Z"
+            }
+          ]
+        },
+        "metadata": {
+          "created_at": "2026-01-25T14:20:00Z",
+          "updated_at": "2026-01-25T14:20:03Z",
+          "processing_time_ms": 3150,
+          "request_source": {
+            "ip_address": "192.168.1.150",
+            "device_type": "SMS",
+            "region": "Kigali"
+          }
+        }
+      }
+    }
+  },
+  "sqlToJsonMapping": {
+    "description": "Complete SQL Table to JSON Schema Mapping Documentation",
+    "mappings": [
+      {
+        "sqlTable": "Users",
+        "jsonSchema": "User",
+        "purpose": "User account and profile management",
+        "sqlColumns": {
+          "user_id": "INT AUTO_INCREMENT PRIMARY KEY",
+          "phone_number": "VARCHAR(15) UNIQUE",
+          "full_name": "VARCHAR(100)",
+          "email": "VARCHAR(100) UNIQUE",
+          "account_balance": "DECIMAL(15,2)",
+          "registration_date": "DATETIME",
+          "status": "ENUM('active', 'inactive', 'suspended')",
+          "created_at": "TIMESTAMP",
+          "updated_at": "TIMESTAMP"
+        },
+        "jsonDataTypes": {
+          "user_id": "integer",
+          "phone_number": "string",
+          "full_name": "string",
+          "email": "string",
+          "account_balance": "number (DECIMAL → float)",
+          "registration_date": "string (ISO 8601)",
+          "status": "string (enum)",
+          "created_at": "string (ISO 8601)",
+          "updated_at": "string (ISO 8601)"
+        },
+        "relationships": ["1:N to Transactions (sender)", "1:N to Transactions (receiver)", "M:N to Transaction_Categories (via User_Category_Preferences)"]
+      },
+      {
+        "sqlTable": "Transaction_Categories",
+        "jsonSchema": "TransactionCategory",
+        "purpose": "Transaction type definitions and fee structures",
+        "sqlColumns": {
+          "category_id": "INT AUTO_INCREMENT PRIMARY KEY",
+          "category_name": "VARCHAR(50) UNIQUE",
+          "description": "TEXT",
+          "fee_percentage": "DECIMAL(5,2)",
+          "is_active": "BOOLEAN",
+          "created_at": "TIMESTAMP",
+          "updated_at": "TIMESTAMP"
+        },
+        "jsonDataTypes": {
+          "category_id": "integer",
+          "category_name": "string",
+          "description": "string",
+          "fee_percentage": "number (DECIMAL → float)",
+          "is_active": "boolean",
+          "created_at": "string (ISO 8601)",
+          "updated_at": "string (ISO 8601)"
+        },
+        "relationships": ["1:N to Transactions", "M:N to Users (via User_Category_Preferences)"]
+      },
+      {
+        "sqlTable": "Transactions",
+        "jsonSchema": "BasicTransaction, CompleteTransactionDetails, ComplexMultiUserTransaction",
+        "purpose": "Financial transaction records with full audit trail",
+        "sqlColumns": {
+          "transaction_id": "INT AUTO_INCREMENT PRIMARY KEY",
+          "sender_id": "INT FK → Users.user_id",
+          "receiver_id": "INT FK → Users.user_id",
+          "category_id": "INT FK → Transaction_Categories.category_id",
+          "amount": "DECIMAL(15,2)",
+          "transaction_date": "DATETIME",
+          "status": "ENUM('pending', 'completed', 'failed', 'reversed')",
+          "reference_number": "VARCHAR(50) UNIQUE",
+          "notes": "TEXT",
+          "fee_amount": "DECIMAL(10,2)",
+          "created_at": "TIMESTAMP",
+          "updated_at": "TIMESTAMP"
+        },
+        "jsonDataTypes": {
+          "transaction_id": "integer",
+          "sender_id": "object (User nested) or integer (FK)",
+          "receiver_id": "object (User nested) or integer (FK)",
+          "category_id": "object (Category nested) or integer (FK)",
+          "amount": "number",
+          "transaction_date": "string (ISO 8601)",
+          "status": "string (enum)",
+          "reference_number": "string",
+          "notes": "string",
+          "fee_amount": "number",
+          "created_at": "string (ISO 8601)",
+          "updated_at": "string (ISO 8601)"
+        },
+        "serializationNotes": "Foreign keys are expanded into nested objects in API responses (CompleteTransactionDetails, ComplexMultiUserTransaction)",
+        "relationships": ["N:1 to Users (sender)", "N:1 to Users (receiver)", "N:1 to Transaction_Categories", "1:N to System_Logs"]
+      },
+      {
+        "sqlTable": "System_Logs",
+        "jsonSchema": "SystemLog (array in CompleteTransactionDetails & ComplexMultiUserTransaction)",
+        "purpose": "Audit trail and transaction lifecycle events",
+        "sqlColumns": {
+          "log_id": "INT AUTO_INCREMENT PRIMARY KEY",
+          "transaction_id": "INT FK → Transactions.transaction_id (nullable)",
+          "log_type": "VARCHAR(50)",
+          "log_message": "TEXT",
+          "severity": "ENUM('info', 'warning', 'error', 'critical')",
+          "created_at": "DATETIME"
+        },
+        "jsonDataTypes": {
+          "log_id": "integer",
+          "transaction_id": "integer (nullable)",
+          "log_type": "string",
+          "log_message": "string",
+          "severity": "string (enum)",
+          "created_at": "string (ISO 8601)"
+        },
+        "serializationNotes": "Serialized as array (audit_trail) within transaction objects",
+        "relationships": ["N:1 to Transactions"]
+      },
+      {
+        "sqlTable": "User_Category_Preferences",
+        "jsonSchema": "UserCategoryPreference (nested in UserWithPreferences)",
+        "purpose": "Many-to-Many junction: user preferences for transaction categories",
+        "sqlColumns": {
+          "preference_id": "INT AUTO_INCREMENT PRIMARY KEY",
+          "user_id": "INT FK → Users.user_id",
+          "category_id": "INT FK → Transaction_Categories.category_id",
+          "preference_level": "INT",
+          "last_used_date": "DATETIME",
+          "usage_count": "INT",
+          "created_at": "TIMESTAMP",
+          "updated_at": "TIMESTAMP"
+        },
+        "jsonDataTypes": {
+          "preference_id": "integer",
+          "user_id": "integer",
+          "category_id": "integer",
+          "preference_level": "integer (1=highest)",
+          "last_used_date": "string (ISO 8601)",
+          "usage_count": "integer",
+          "created_at": "string (ISO 8601)",
+          "updated_at": "string (ISO 8601)"
+        },
+        "serializationNotes": "Expanded to nested category_preferences array in UserWithPreferences, with category object nested",
+        "relationships": ["N:1 to Users", "N:1 to Transaction_Categories"]
+      }
+    ]
+  },
+  "serializationPatterns": {
+    "description": "Common patterns for serializing relational data to JSON",
+    "patterns": [
+      {
+        "pattern": "Foreign Key Expansion",
+        "description": "Foreign keys expanded to nested objects in API responses",
+        "example": "Transactions.sender_id (INT) → CompleteTransactionDetails.sender (OBJECT with user details)"
+      },
+      {
+        "pattern": "One-to-Many to Array",
+        "description": "One-to-many relationships serialized as arrays",
+        "example": "Transaction (1) → System_Logs (Many) serialized as audit_trail array"
+      },
+      {
+        "pattern": "Many-to-Many with Junction Table",
+        "description": "M:M relationships through junction table expanded to nested arrays",
+        "example": "Users ↔ Transaction_Categories via User_Category_Preferences → category_preferences array with nested category objects"
+      },
+      {
+        "pattern": "Date Conversion",
+        "description": "SQL DATETIME/TIMESTAMP → ISO 8601 string format",
+        "example": "DATETIME '2026-01-25 10:30:00' → '2026-01-25T10:30:00Z'"
+      },
+      {
+        "pattern": "Decimal to Number",
+        "description": "DECIMAL columns → JSON number type",
+        "example": "DECIMAL(15,2) 10000.00 → 10000.00 (number)"
+      },
+      {
+        "pattern": "Boolean Representation",
+        "description": "BOOLEAN/TINYINT(1) → JSON boolean",
+        "example": "is_active TINYINT(1) 1 → true"
+      },
+      {
+        "pattern": "Calculated Fields",
+        "description": "Derived values computed during serialization",
+        "example": "balance_after_transaction calculated from original balance and transaction amount"
+      },
+      {
+        "pattern": "Enum to String",
+        "description": "ENUM values → JSON string",
+        "example": "status ENUM → 'active', 'pending', 'completed'"
+      }
+    ]
+  }
+}
