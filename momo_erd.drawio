@@ -1,93 +1,55 @@
 <mxfile host="app.diagrams.net">
-  <diagram name="MoMo ERD" id="momo_sms_erd">
-    <mxGraphModel dx="700" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="600" math="0" shadow="0">
+  <diagram name="MoMo ERD Alt" id="alt_momo_sms">
+    <mxGraphModel grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1">
       <root>
         <mxCell id="0"/>
         <mxCell id="1"/>
 
-        <!-- USERS -->
-        <mxCell id="users" value=" Users&#xa;-----&#xa;user_id (PK)&#xa;name&#xa;phone&#xa;national_id" style="shape=rectangle;rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F4F8;" vertex="1">
-          <mxGeometry x="50" y="80" width="160" height="120" as="geometry"/>
+        <!-- Parties -->
+        <mxCell id="Parties" value="Parties&#xa;---------&#xa;PK party_id&#xa;party_name&#xa;party_type&#xa;phone_number&#xa;created_at" style="shape=rectangle;whiteSpace=wrap;html=1;" vertex="1">
+          <mxGeometry x="80" y="120" width="220" height="160" as="geometry"/>
         </mxCell>
 
-        <!-- TRANSACTIONS -->
-        <mxCell id="transactions" value=" Transactions&#xa;----------&#xa;transaction_id (PK)&#xa;code&#xa;amount&#xa;status&#xa;sender_id (FK)&#xa;receiver_id (FK)&#xa;category_id (FK)" style="shape=rectangle;rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF4E6;" vertex="1">
-          <mxGeometry x="280" y="60" width="180" height="160" as="geometry"/>
+        <!-- Accounts -->
+        <mxCell id="Accounts" value="Accounts&#xa;----------&#xa;PK account_id&#xa;account_type&#xa;currency&#xa;current_balance&#xa;FK party_id" style="shape=rectangle;whiteSpace=wrap;html=1;" vertex="1">
+          <mxGeometry x="360" y="120" width="230" height="160" as="geometry"/>
         </mxCell>
 
-        <!-- TRANSACTION CATEGORIES -->
-        <mxCell id="categories" value=" Categories&#xa;-----&#xa;category_id (PK)&#xa;name&#xa;desc" style="shape=rectangle;rounded=0;whiteSpace=wrap;html=1;fillColor=#F0F4E8;" vertex="1">
-          <mxGeometry x="530" y="80" width="140" height="110" as="geometry"/>
+        <!-- Transactions -->
+        <mxCell id="Transactions" value="Transactions&#xa;--------------&#xa;PK transaction_id&#xa;transaction_code&#xa;transaction_timestamp&#xa;amount&#xa;currency&#xa;status&#xa;FK sender_account_id&#xa;FK receiver_account_id&#xa;FK category_id" style="shape=rectangle;whiteSpace=wrap;html=1;" vertex="1">
+          <mxGeometry x="660" y="100" width="310" height="240" as="geometry"/>
         </mxCell>
 
-        <!-- SYSTEM LOGS -->
-        <mxCell id="logs" value=" Logs&#xa;-----&#xa;log_id (PK)&#xa;timestamp&#xa;level&#xa;message" style="shape=rectangle;rounded=0;whiteSpace=wrap;html=1;fillColor=#F5E8F8;" vertex="1">
-          <mxGeometry x="280" y="280" width="140" height="110" as="geometry"/>
+        <!-- Categories -->
+        <mxCell id="Categories" value="Transaction_Categories&#xa;-----------------------&#xa;PK category_id&#xa;category_name&#xa;description" style="shape=rectangle;whiteSpace=wrap;html=1;" vertex="1">
+          <mxGeometry x="1040" y="140" width="260" height="140" as="geometry"/>
         </mxCell>
 
-        <!-- TAGS -->
-        <mxCell id="tags" value=" Tags&#xa;-----&#xa;tag_id (PK)&#xa;name" style="shape=rectangle;rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F8F4;" vertex="1">
-          <mxGeometry x="530" y="280" width="120" height="90" as="geometry"/>
+        <!-- Fees -->
+        <mxCell id="Fees" value="Fees&#xa;------&#xa;PK fee_id&#xa;fee_amount&#xa;fee_type&#xa;FK transaction_id" style="shape=rectangle;whiteSpace=wrap;html=1;" vertex="1">
+          <mxGeometry x="740" y="380" width="200" height="140" as="geometry"/>
         </mxCell>
 
-        <!-- TRANSACTION TAGS (JUNCTION) -->
-        <mxCell id="trx_tags" value="Transaction&#xa;Tags&#xa;-------&#xa;transaction_id&#xa;tag_id" style="shape=rectangle;rounded=0;whiteSpace=wrap;html=1;fillColor=#F8F4E8;" vertex="1">
-          <mxGeometry x="420" y="190" width="110" height="100" as="geometry"/>
+        <!-- Logs -->
+        <mxCell id="Logs" value="Processing_Logs&#xa;-------------------&#xa;PK log_id&#xa;log_timestamp&#xa;log_level&#xa;message&#xa;FK transaction_id" style="shape=rectangle;whiteSpace=wrap;html=1;" vertex="1">
+          <mxGeometry x="1020" y="380" width="260" height="160" as="geometry"/>
         </mxCell>
 
-        <!-- RELATIONSHIPS -->
-
-        <!-- Users sender_id -->
-        <mxCell id="rel1" edge="1" value="sends" style="endArrow=block;html=1;">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="210" y="120" as="sourcePoint"/>
-            <mxPoint x="280" y="120" as="targetPoint"/>
-          </mxGeometry>
-          <mxCell source="users" target="transactions"/>
+        <!-- Relationships -->
+        <mxCell edge="1" source="Parties" target="Accounts" value="1:M" style="endArrow=block;html=1;">
+          <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-
-        <!-- Users receiver_id -->
-        <mxCell id="rel2" edge="1" value="receives" style="endArrow=block;html=1;">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="210" y="150" as="sourcePoint"/>
-            <mxPoint x="280" y="150" as="targetPoint"/>
-          </mxGeometry>
-          <mxCell source="users" target="transactions"/>
+        <mxCell edge="1" source="Accounts" target="Transactions" value="1:M" style="endArrow=block;html=1;">
+          <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-
-        <!-- Transactions to Categories -->
-        <mxCell id="rel3" edge="1" value="has" style="endArrow=block;html=1;">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="460" y="100" as="sourcePoint"/>
-            <mxPoint x="530" y="100" as="targetPoint"/>
-          </mxGeometry>
-          <mxCell source="transactions" target="categories"/>
+        <mxCell edge="1" source="Transactions" target="Categories" value="M:1" style="endArrow=block;html=1;">
+          <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-
-        <!-- Transactions to Logs -->
-        <mxCell id="rel4" edge="1" value="logs" style="endArrow=block;html=1;">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="350" y="220" as="sourcePoint"/>
-            <mxPoint x="350" y="280" as="targetPoint"/>
-          </mxGeometry>
-          <mxCell source="transactions" target="logs"/>
+        <mxCell edge="1" source="Transactions" target="Fees" value="1:M" style="endArrow=block;html=1;">
+          <mxGeometry relative="1" as="geometry"/>
         </mxCell>
-
-        <!-- Transaction <-> Tags via junction -->
-        <mxCell id="rel5" edge="1" value="tagged" style="endArrow=block;html=1;">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="370" y="160" as="sourcePoint"/>
-            <mxPoint x="430" y="190" as="targetPoint"/>
-          </mxGeometry>
-          <mxCell source="transactions" target="trx_tags"/>
-        </mxCell>
-
-        <mxCell id="rel6" edge="1" value="tagged" style="endArrow=block;html=1;">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="530" y="280" as="sourcePoint"/>
-            <mxPoint x="480" y="240" as="targetPoint"/>
-          </mxGeometry>
-          <mxCell source="tags" target="trx_tags"/>
+        <mxCell edge="1" source="Transactions" target="Logs" value="1:M" style="endArrow=block;html=1;">
+          <mxGeometry relative="1" as="geometry"/>
         </mxCell>
 
       </root>
