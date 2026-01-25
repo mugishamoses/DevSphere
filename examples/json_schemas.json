@@ -1,0 +1,488 @@
+{
+  "schema_documentation": {
+    "title": "MoMo SMS Data Processing System - JSON Schema Examples",
+    "version": "1.0",
+    "date": "2026-01-25",
+    "description": "JSON data models representing relational database entities with proper nesting and data serialization for API responses"
+  },
+
+  "sql_to_json_mapping": {
+    "parties": "User/Customer/Agent objects",
+    "accounts": "Account objects with balance tracking",
+    "transaction_categories": "Category objects for transaction classification",
+    "transactions": "Complex transaction objects with nested sender/receiver and category data",
+    "fees": "Fee objects associated with transactions",
+    "processing_logs": "Log objects for audit trails and system events",
+    "transaction_tags": "Tag array within transaction objects (many-to-many)"
+  },
+
+  "entities": {
+    "party": {
+      "description": "Represents a user, customer, or agent in the system",
+      "sql_table": "parties",
+      "example": {
+        "party_id": 1,
+        "party_name": "Mugisha Moses",
+        "party_type": "Individual",
+        "phone_number": "+256701234567",
+        "national_id": "CM-123456789",
+        "email": "mugisha@example.com",
+        "created_at": "2026-01-20T10:30:00Z",
+        "updated_at": "2026-01-25T14:45:00Z"
+      }
+    },
+
+    "account": {
+      "description": "Represents a financial account belonging to a party",
+      "sql_table": "accounts",
+      "example": {
+        "account_id": 1,
+        "party_id": 1,
+        "account_type": "Wallet",
+        "currency": "USD",
+        "current_balance": 5000.00,
+        "is_active": true,
+        "created_at": "2026-01-20T10:30:00Z",
+        "updated_at": "2026-01-25T14:45:00Z"
+      }
+    },
+
+    "transaction_category": {
+      "description": "Classification type for transactions",
+      "sql_table": "transaction_categories",
+      "example": {
+        "category_id": 1,
+        "category_name": "Money Transfer",
+        "description": "Person-to-person money transfer for personal payments",
+        "is_active": true,
+        "created_at": "2026-01-20T10:30:00Z"
+      }
+    },
+
+    "fee": {
+      "description": "Transaction fee associated with a transaction",
+      "sql_table": "fees",
+      "example": {
+        "fee_id": 1,
+        "transaction_id": 1,
+        "fee_amount": 5.00,
+        "fee_type": "Flat",
+        "fee_percentage": null,
+        "created_at": "2026-01-20T14:30:00Z"
+      }
+    },
+
+    "processing_log": {
+      "description": "System log entry for ETL processing events",
+      "sql_table": "processing_logs",
+      "example": {
+        "log_id": 1,
+        "transaction_id": 1,
+        "log_level": "INFO",
+        "message": "Transaction parsed successfully from XML source",
+        "log_timestamp": "2026-01-20T14:25:00Z",
+        "process_name": "parse_xml",
+        "status": "Success"
+      }
+    },
+
+    "transaction_tag": {
+      "description": "Tag applied to a transaction (many-to-many junction)",
+      "sql_table": "transaction_tags",
+      "example": {
+        "transaction_id": 1,
+        "tag_name": "verified",
+        "assigned_at": "2026-01-20T14:28:00Z",
+        "assigned_by": "system"
+      }
+    }
+  },
+
+  "complex_models": {
+    "complete_transaction_with_all_relations": {
+      "description": "A complete transaction record with all related data (sender, receiver, category, fees, logs, tags)",
+      "sql_tables_involved": ["transactions", "accounts", "parties", "transaction_categories", "fees", "processing_logs", "transaction_tags"],
+      "example": {
+        "transaction_id": 1,
+        "transaction_code": "TXN-001-2026-001",
+        "amount": 500.00,
+        "currency": "USD",
+        "status": "Completed",
+        "transaction_timestamp": "2026-01-20T14:30:00Z",
+        "description": "Payment for services",
+        
+        "sender": {
+          "account_id": 1,
+          "party_id": 1,
+          "party_name": "Mugisha Moses",
+          "party_type": "Individual",
+          "phone_number": "+256701234567",
+          "account_type": "Wallet",
+          "account_balance_before": 5500.00
+        },
+
+        "receiver": {
+          "account_id": 2,
+          "party_id": 2,
+          "party_name": "Lisa Ineza",
+          "party_type": "Individual",
+          "phone_number": "+256702345678",
+          "account_type": "Wallet",
+          "account_balance_before": 3000.50
+        },
+
+        "category": {
+          "category_id": 1,
+          "category_name": "Money Transfer",
+          "description": "Person-to-person money transfer for personal payments"
+        },
+
+        "fees": [
+          {
+            "fee_id": 1,
+            "fee_amount": 5.00,
+            "fee_type": "Flat",
+            "fee_percentage": null
+          }
+        ],
+
+        "processing_logs": [
+          {
+            "log_id": 1,
+            "log_level": "INFO",
+            "message": "Transaction parsed successfully from XML source",
+            "log_timestamp": "2026-01-20T14:25:00Z",
+            "process_name": "parse_xml",
+            "status": "Success"
+          },
+          {
+            "log_id": 2,
+            "log_level": "INFO",
+            "message": "Amount normalized and validated",
+            "log_timestamp": "2026-01-20T14:26:00Z",
+            "process_name": "clean_normalize",
+            "status": "Success"
+          },
+          {
+            "log_id": 3,
+            "log_level": "INFO",
+            "message": "Transaction categorized as Money Transfer",
+            "log_timestamp": "2026-01-20T14:27:00Z",
+            "process_name": "categorize",
+            "status": "Success"
+          },
+          {
+            "log_id": 4,
+            "log_level": "INFO",
+            "message": "Data loaded into database successfully",
+            "log_timestamp": "2026-01-20T14:28:00Z",
+            "process_name": "load_db",
+            "status": "Success"
+          }
+        ],
+
+        "tags": [
+          {
+            "tag_name": "verified",
+            "assigned_at": "2026-01-20T14:28:00Z",
+            "assigned_by": "system"
+          },
+          {
+            "tag_name": "high-priority",
+            "assigned_at": "2026-01-20T14:29:00Z",
+            "assigned_by": "admin"
+          }
+        ],
+
+        "summary": {
+          "total_amount": 500.00,
+          "total_fees": 5.00,
+          "total_deducted_from_sender": 505.00,
+          "amount_received": 500.00,
+          "processing_steps_completed": 4,
+          "all_validations_passed": true
+        }
+      }
+    },
+
+    "party_with_all_accounts": {
+      "description": "A party (user) with all their accounts and account summaries",
+      "sql_tables_involved": ["parties", "accounts"],
+      "example": {
+        "party_id": 1,
+        "party_name": "Mugisha Moses",
+        "party_type": "Individual",
+        "phone_number": "+256701234567",
+        "national_id": "CM-123456789",
+        "email": "mugisha@example.com",
+        "created_at": "2026-01-20T10:30:00Z",
+        
+        "accounts": [
+          {
+            "account_id": 1,
+            "account_type": "Wallet",
+            "currency": "USD",
+            "current_balance": 5000.00,
+            "is_active": true,
+            "transaction_count": 5,
+            "total_sent": 2000.00,
+            "total_received": 3500.00
+          },
+          {
+            "account_id": 6,
+            "account_type": "Savings",
+            "currency": "USD",
+            "current_balance": 12000.00,
+            "is_active": true,
+            "transaction_count": 2,
+            "total_sent": 0.00,
+            "total_received": 12000.00
+          }
+        ],
+
+        "summary": {
+          "total_accounts": 2,
+          "total_balance": 17000.00,
+          "total_transactions": 7,
+          "registration_date": "2026-01-20T10:30:00Z",
+          "member_for_days": 6
+        }
+      }
+    },
+
+    "transaction_list_for_account": {
+      "description": "List of all transactions for a specific account (sent and received)",
+      "sql_tables_involved": ["transactions", "accounts", "parties", "transaction_categories"],
+      "example": {
+        "account_id": 1,
+        "account_owner": "Mugisha Moses",
+        "currency": "USD",
+        
+        "transactions": [
+          {
+            "transaction_id": 1,
+            "transaction_code": "TXN-001-2026-001",
+            "type": "sent",
+            "other_party": "Lisa Ineza",
+            "other_party_phone": "+256702345678",
+            "category": "Money Transfer",
+            "amount": 500.00,
+            "fee": 5.00,
+            "status": "Completed",
+            "timestamp": "2026-01-20T14:30:00Z",
+            "description": "Payment for services"
+          },
+          {
+            "transaction_id": 2,
+            "transaction_code": "TXN-001-2026-002",
+            "type": "received",
+            "other_party": "Lisa Ineza",
+            "other_party_phone": "+256702345678",
+            "category": "Money Transfer",
+            "amount": 250.00,
+            "fee": 2.50,
+            "status": "Completed",
+            "timestamp": "2026-01-21T09:15:00Z",
+            "description": "Refund"
+          }
+        ],
+
+        "summary": {
+          "total_sent": 500.00,
+          "total_received": 250.00,
+          "net_change": -250.00,
+          "transaction_count": 2
+        }
+      }
+    },
+
+    "daily_analytics_summary": {
+      "description": "Daily transaction analytics aggregated by category",
+      "sql_tables_involved": ["transactions", "transaction_categories", "fees"],
+      "example": {
+        "date": "2026-01-25",
+        "daily_summary": [
+          {
+            "category": "Money Transfer",
+            "transaction_count": 3,
+            "completed_count": 3,
+            "failed_count": 0,
+            "pending_count": 0,
+            "total_amount": 1450.00,
+            "total_fees": 21.75,
+            "success_rate_percent": 100
+          },
+          {
+            "category": "Bill Payment",
+            "transaction_count": 1,
+            "completed_count": 1,
+            "failed_count": 0,
+            "pending_count": 0,
+            "total_amount": 1000.00,
+            "total_fees": 10.00,
+            "success_rate_percent": 100
+          },
+          {
+            "category": "Airtime Purchase",
+            "transaction_count": 1,
+            "completed_count": 1,
+            "failed_count": 0,
+            "pending_count": 0,
+            "total_amount": 50.00,
+            "total_fees": 0.50,
+            "success_rate_percent": 100
+          }
+        ],
+
+        "daily_totals": {
+          "total_transactions": 5,
+          "total_completed": 5,
+          "total_amount_transferred": 2500.00,
+          "total_fees_collected": 32.25,
+          "system_success_rate": 100
+        }
+      }
+    }
+  },
+
+  "api_response_examples": {
+    "get_transaction_details": {
+      "endpoint": "GET /api/transactions/{transaction_id}",
+      "description": "Fetch detailed transaction with all relations",
+      "response_body": {
+        "success": true,
+        "timestamp": "2026-01-25T15:45:00Z",
+        "data": {
+          "transaction_id": 1,
+          "transaction_code": "TXN-001-2026-001",
+          "amount": 500.00,
+          "currency": "USD",
+          "status": "Completed",
+          "sender": {
+            "party_id": 1,
+            "name": "Mugisha Moses",
+            "phone": "+256701234567"
+          },
+          "receiver": {
+            "party_id": 2,
+            "name": "Lisa Ineza",
+            "phone": "+256702345678"
+          },
+          "category": "Money Transfer",
+          "timestamp": "2026-01-20T14:30:00Z"
+        }
+      }
+    },
+
+    "list_user_transactions": {
+      "endpoint": "GET /api/parties/{party_id}/transactions",
+      "description": "List all transactions for a user with pagination",
+      "response_body": {
+        "success": true,
+        "data": [
+          {
+            "transaction_id": 1,
+            "code": "TXN-001-2026-001",
+            "type": "sent",
+            "amount": 500.00,
+            "status": "Completed",
+            "timestamp": "2026-01-20T14:30:00Z"
+          },
+          {
+            "transaction_id": 2,
+            "code": "TXN-001-2026-002",
+            "type": "received",
+            "amount": 250.00,
+            "status": "Completed",
+            "timestamp": "2026-01-21T09:15:00Z"
+          }
+        ],
+        "pagination": {
+          "current_page": 1,
+          "total_pages": 5,
+          "total_count": 45
+        }
+      }
+    },
+
+    "create_transaction": {
+      "endpoint": "POST /api/transactions",
+      "description": "Create a new transaction",
+      "request_body": {
+        "sender_account_id": 1,
+        "receiver_account_id": 2,
+        "category_id": 1,
+        "amount": 500.00,
+        "currency": "USD",
+        "description": "Payment for services"
+      },
+      "response_body": {
+        "success": true,
+        "message": "Transaction created successfully",
+        "data": {
+          "transaction_id": 6,
+          "transaction_code": "TXN-001-2026-006",
+          "status": "Pending",
+          "created_at": "2026-01-25T15:45:00Z"
+        }
+      }
+    }
+  },
+
+  "data_type_mappings": {
+    "database_to_json": [
+      {
+        "sql_type": "INT AUTO_INCREMENT PRIMARY KEY",
+        "json_type": "integer (unique identifier)",
+        "example": 1
+      },
+      {
+        "sql_type": "VARCHAR(255)",
+        "json_type": "string",
+        "example": "Mugisha Moses"
+      },
+      {
+        "sql_type": "ENUM(...)",
+        "json_type": "string (one of specified values)",
+        "example": "Completed"
+      },
+      {
+        "sql_type": "DECIMAL(15,2)",
+        "json_type": "number (float with 2 decimal places)",
+        "example": 5000.00
+      },
+      {
+        "sql_type": "BOOLEAN",
+        "json_type": "boolean",
+        "example": true
+      },
+      {
+        "sql_type": "TIMESTAMP / DATETIME",
+        "json_type": "string (ISO 8601 format)",
+        "example": "2026-01-20T14:30:00Z"
+      },
+      {
+        "sql_type": "FOREIGN KEY reference",
+        "json_type": "nested object or object array",
+        "example": { "sender": { "party_id": 1, "name": "..." } }
+      }
+    ]
+  },
+
+  "validation_rules": {
+    "transaction": {
+      "amount": "Must be > 0",
+      "sender_account_id": "Must not equal receiver_account_id",
+      "currency": "ISO 4217 currency code (e.g., USD, RWF)",
+      "status": "Must be one of: Pending, Completed, Failed, Reversed"
+    },
+    "account": {
+      "current_balance": "Must be >= 0",
+      "account_type": "Must be one of: Wallet, Savings, Business, Agent"
+    },
+    "party": {
+      "phone_number": "Must be at least 10 characters, unique",
+      "party_type": "Must be one of: Individual, Business, Agent"
+    }
+  }
+}
